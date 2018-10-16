@@ -1,16 +1,16 @@
 <?php
 
-//New function for actionAddproperty
+//New function for actionAddproperty -- update 16/10/18 to make more simple
     public function actionAddproperty()
     {
-      //save to three models
+      //define three models
       $properties = new Properties();
       $images = new Images();
       $propertiesImages = new PropertiesImages();
 
-      $transaction = Yii::$app->db->beginTransaction();
 
-      try {
+
+      //return true only if the view has posted data
       if ($properties->load(Yii::$app->request->post()))  {
 
         //save created, updated and delete attributes within class, not view
@@ -35,17 +35,17 @@
         if ($properties->validate() && $images->validate()) {
 
 
-
          $properties->save();
          $images->save();
 
 
-        //get PK's for FK's in linking model
+         //get PKs from properties and images for use in our mapping model
          $propertiesImages->PropertiesID = $properties->PropertiesID ;
          $propertiesImages->ImagesID = $images->ImagesID  ;
 
             if ($propertiesImages->validate()) {
 
+            //save to the mapping model
             $propertiesImages->save();
 
             }else{
@@ -57,30 +57,30 @@
 
 
 
-         $transaction->commit();
+
          //return to controller view
         return $this->redirect(['/properties']);
-         //return;
+
+
         }else{
 
         throw Exception('Unable to save images or properties records.');
         $errors = $properties->errors;
         var_dump($errors);
 
-        }
+      }//close validate properties / images
 
-        }
-
-        } catch(Exception $e) {
-          $transaction->rollback();
-      }//close try
+    }//close if post
 
 
 
        return $this->render('addproperty', [
+
+          //send the models to the view
            'properties' => $properties, 'images' => $images,
        ]);
 
     }//close actionAddproperty
+
     
     ?>
