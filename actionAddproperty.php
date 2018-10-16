@@ -1,6 +1,7 @@
 <?php
 
 //New function for actionAddproperty -- update 16/10/18 to make more simple
+//Place this function within the site controller
     public function actionAddproperty()
     {
       //define three models
